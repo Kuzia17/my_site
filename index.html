@@ -13,7 +13,7 @@
     <style>
         :root {
             --bg-dark: #08090a;
-            --card-bg: rgba(18, 20, 26, 0.7);
+            --card-bg: rgba(18, 20, 26, 0.75);
             --card-border: rgba(255, 255, 255, 0.08);
             --accent-gold: #e2b86b;
             --accent-gold-glow: rgba(226, 184, 107, 0.15);
@@ -35,7 +35,6 @@
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
-            /* Премиальная фоновая сетка */
             background-image: 
                 radial-gradient(circle at 50% 0%, rgba(226, 184, 107, 0.12) 0%, transparent 50%),
                 linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
@@ -51,11 +50,11 @@
 
         /* Шапка */
         header {
-            padding: 24px 0;
+            padding: 20px 0;
             border-bottom: 1px solid var(--card-border);
             position: sticky;
             top: 0;
-            background: rgba(8, 9, 10, 0.8);
+            background: rgba(8, 9, 10, 0.85);
             backdrop-filter: blur(16px);
             z-index: 100;
         }
@@ -77,7 +76,6 @@
             color: var(--accent-gold);
         }
 
-        /* Бэджи / Теги */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -102,7 +100,6 @@
             box-shadow: 0 0 8px var(--accent-gold);
         }
 
-        /* Кнопки */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -116,6 +113,8 @@
             text-decoration: none;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 20px rgba(226, 184, 107, 0.25);
+            border: none;
+            cursor: pointer;
         }
 
         .btn:hover {
@@ -130,7 +129,6 @@
             box-shadow: none;
         }
 
-        /* Заголовки */
         h1, h2, h3 {
             font-weight: 800;
             line-height: 1.2;
@@ -159,26 +157,36 @@
             -webkit-text-fill-color: var(--accent-gold);
         }
 
-        /* Секции */
         section {
             padding: 100px 0;
             position: relative;
         }
 
-        /* Интерактивные Карточки */
+        /* Анимация скролла */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Карточки со следящей подсветкой */
         .card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 16px;
             padding: 40px;
             backdrop-filter: blur(12px);
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
         .card:hover {
-            border-color: rgba(226, 184, 107, 0.4);
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px var(--accent-gold-glow);
         }
@@ -195,12 +203,12 @@
             gap: 24px;
         }
 
-        /* Hero */
+        /* Hero & Интерактивный Canvas */
         .hero {
-            padding: 120px 0 80px;
+            padding: 100px 0 60px;
             display: grid;
             grid-template-columns: 1.2fr 0.8fr;
-            gap: 60px;
+            gap: 40px;
             align-items: center;
         }
 
@@ -211,39 +219,21 @@
             max-width: 600px;
         }
 
-        /* Геометрический Арт-блок в Hero */
-        .hero-art {
+        .hero-canvas-container {
             position: relative;
-            height: 380px;
-            border-radius: 20px;
-            background: radial-gradient(circle at center, rgba(226, 184, 107, 0.15) 0%, transparent 70%);
-            border: 1px solid var(--card-border);
+            width: 100%;
+            height: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .art-cube {
-            width: 160px;
-            height: 160px;
-            border: 2px solid var(--accent-gold);
-            transform: rotateX(55deg) rotateZ(45deg);
-            box-shadow: 0 0 40px rgba(226, 184, 107, 0.3);
-            animation: float 6s ease-in-out infinite;
+        #hexCanvas {
+            width: 100%;
+            height: 100%;
         }
 
-        .art-cube-inner {
-            position: absolute;
-            inset: 20px;
-            border: 1px dashed rgba(255, 255, 255, 0.4);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: rotateX(55deg) rotateZ(45deg) translateY(0); }
-            50% { transform: rotateX(55deg) rotateZ(45deg) translateY(-15px); }
-        }
-
-        /* Плашки с цифрами в блоке О себе */
+        /* Цифры О себе */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -252,14 +242,14 @@
         }
 
         .stat-item {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--card-border);
             border-radius: 12px;
             padding: 20px;
         }
 
         .stat-num {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 800;
             color: var(--accent-gold);
         }
@@ -269,7 +259,6 @@
             color: var(--text-muted);
         }
 
-        /* Списки */
         .custom-list {
             list-style: none;
         }
@@ -296,7 +285,6 @@
             border: 1px solid rgba(226, 184, 107, 0.3);
             border-radius: 20px;
             padding: 48px;
-            position: relative;
         }
 
         .quote-text {
@@ -307,21 +295,15 @@
             color: #ffffff;
         }
 
-        /* FAQ */
         .faq-card h3 {
             color: var(--accent-gold);
             margin-bottom: 12px;
             font-size: 1.2rem;
         }
 
-        .faq-card p {
-            color: var(--text-muted);
-        }
-
-        /* Финал */
         .cta-box {
             text-align: center;
-            background: radial-gradient(circle at center, rgba(226, 184, 107, 0.15) 0%, rgba(18, 20, 26, 0.9) 100%);
+            background: radial-gradient(circle at center, rgba(226, 184, 107, 0.15) 0%, rgba(18, 20, 26, 0.95) 100%);
             border: 1px solid rgba(226, 184, 107, 0.3);
             border-radius: 24px;
             padding: 80px 40px;
@@ -338,8 +320,8 @@
         @media (max-width: 900px) {
             h1 { font-size: 2.3rem; }
             h2 { font-size: 1.8rem; }
-            .hero { grid-template-columns: 1fr; padding: 60px 0 40px; }
-            .hero-art { display: none; }
+            .hero { grid-template-columns: 1fr; padding: 40px 0; }
+            .hero-canvas-container { height: 300px; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
             .card { padding: 28px; }
             .stats-grid { grid-template-columns: 1fr; }
@@ -355,23 +337,23 @@
         </div>
     </header>
 
-    <!-- HERO -->
+    <!-- HERO с интерактивными шестиугольниками -->
     <section>
         <div class="container hero">
-            <div>
+            <div class="reveal active">
                 <div class="badge"><span class="badge-dot"></span> Стратегический консалтинг & Коучинг</div>
                 <h1>Стратегический бизнес-партнёр для собственников, которые знают, что делать — <span class="gold-text">но буксуют</span></h1>
                 <p class="hero-p">Работаю с предпринимателями с командой 10–50 человек. Не даю готовый план — прихожу как партнёр, который держит фокус на цели и подсвечивает слепые зоны.</p>
                 <a href="https://t.me/LuckyEX" target="_blank" class="btn">Записаться на бесплатную диагностику →</a>
             </div>
-            <div class="hero-art">
-                <div class="art-cube"><div class="art-cube-inner"></div></div>
+            <div class="hero-canvas-container">
+                <canvas id="hexCanvas"></canvas>
             </div>
         </div>
     </section>
 
     <!-- БОЛИ -->
-    <section>
+    <section class="reveal">
         <div class="container">
             <h2>Узнаёте себя?</h2>
             <div class="grid-2">
@@ -392,7 +374,7 @@
     </section>
 
     <!-- О СЕБЕ -->
-    <section>
+    <section class="reveal">
         <div class="container">
             <h2>Почему стоит работать именно со мной</h2>
             <div class="card">
@@ -417,7 +399,7 @@
     </section>
 
     <!-- ОФФЕР -->
-    <section>
+    <section class="reveal">
         <div class="container">
             <h2>Как мы работаем</h2>
             <div class="grid-3">
@@ -438,7 +420,7 @@
     </section>
 
     <!-- ДИАГНОСТИКА -->
-    <section>
+    <section class="reveal">
         <div class="container">
             <div class="card" style="border-color: rgba(226, 184, 107, 0.4);">
                 <div class="badge"><span class="badge-dot"></span> Первый шаг</div>
@@ -454,7 +436,7 @@
     </section>
 
     <!-- КВАЛИФИКАЦИЯ -->
-    <section>
+    <section class="reveal">
         <div class="container">
             <h2>С кем я работаю</h2>
             <div class="grid-2">
@@ -478,7 +460,7 @@
     </section>
 
     <!-- ОТЗЫВ -->
-    <section>
+    <section class="reveal">
         <div class="container">
             <div class="quote-card">
                 <p class="quote-text">«Ты красавчик, мощная батарейка с правильными вопросами и человечными ценностями. Пусть твой подход и отношение монетизируются в лёгкости, ярко, сильно, усиливаясь от каждой встречи!»</p>
@@ -488,28 +470,28 @@
     </section>
 
     <!-- FAQ -->
-    <section>
+    <section class="reveal">
         <div class="container" style="max-width: 800px;">
             <h2>Ответы на вопросы</h2>
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <div class="card faq-card">
                     <h3>Вы гарантируете результат?</h3>
-                    <p>Нет — и это честно. Я не управляю вашим бизнесом за вас. Моя зона ответственности — качество ваших решений и то, чтобы вы не сбивались с курса к цели.</p>
+                    <p style="color: var(--text-muted);">Нет — и это честно. Я не управляю вашим бизнесом за вас. Моя зона ответственности — качество ваших решений и то, чтобы вы не сбивались с курса к цели.</p>
                 </div>
                 <div class="card faq-card">
                     <h3>Чем это отличается от консалтинга?</h3>
-                    <p>Консультант приносит готовое решение. Я работаю через вопросы — так, чтобы решение оставалось вашим, но подсвечиваю риски, если вижу ошибку.</p>
+                    <p style="color: var(--text-muted);">Консультант приносит готовое решение. Я работаю через вопросы — так, чтобы решение оставалось вашим, но подсвечиваю риски, если вижу ошибку.</p>
                 </div>
                 <div class="card faq-card">
                     <h3>Сколько это стоит?</h3>
-                    <p>Первая диагностика бесплатна. Дальнейшие условия обсуждаем индивидуально после понимания вашей задачи.</p>
+                    <p style="color: var(--text-muted);">Первая диагностика бесплатна. Дальнейшие условия обсуждаем индивидуально после понимания вашей задачи.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA -->
-    <section>
+    <section class="reveal">
         <div class="container">
             <div class="cta-box">
                 <h2>Готовы посмотреть на бизнес со стороны?</h2>
@@ -527,5 +509,84 @@
         </div>
     </footer>
 
+    <!-- Скрипт интерактивных шестиугольников и плавной анимации -->
+    <script>
+        // 1. Анимация Canvas: 3 вращающихся шестиугольника
+        const canvas = document.getElementById('hexCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+
+        window.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.targetX = (e.clientX - rect.left - canvas.width / 2) * 0.0008;
+            mouse.targetY = (e.clientY - rect.top - canvas.height / 2) * 0.0008;
+        });
+
+        const hexagons = [
+            { radius: 110, color: 'rgba(226, 184, 107, 0.8)', width: 2, speed: 0.004, angle: 0, dash: [] },
+            { radius: 80,  color: 'rgba(255, 255, 255, 0.4)', width: 1.5, speed: -0.006, angle: Math.PI / 6, dash: [8, 8] },
+            { radius: 50,  color: 'rgba(156, 163, 175, 0.6)', width: 1, speed: 0.009, angle: Math.PI / 3, dash: [] }
+        ];
+
+        function drawHexagon(x, y, radius, angle, color, lineWidth, dash) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            if (dash.length) ctx.setLineDash(dash);
+
+            for (let i = 0; i < 6; i++) {
+                const a = angle + (Math.PI / 3) * i;
+                const hx = x + radius * Math.cos(a);
+                const hy = y + radius * Math.sin(a);
+                if (i === 0) ctx.moveTo(hx, hy);
+                else ctx.lineTo(hx, hy);
+            }
+            ctx.closePath();
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Плавный инерционный переход при движении мыши
+            mouse.x += (mouse.targetX - mouse.x) * 0.05;
+            mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            hexagons.forEach((hex) => {
+                hex.angle += hex.speed + mouse.x + mouse.y;
+                drawHexagon(centerX, centerY, hex.radius, hex.angle, hex.color, hex.width, hex.dash);
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 2. Анимация появления блоков при скролле (Scroll Reveal)
+        const revealElements = document.querySelectorAll('.reveal');
+        function checkReveal() {
+            const windowHeight = window.innerHeight;
+            revealElements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 80) {
+                    el.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', checkReveal);
+        checkReveal();
+    </script>
 </body>
 </html>
