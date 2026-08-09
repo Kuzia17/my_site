@@ -2,9 +2,462 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Мой сайт</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Илья | Стратегический бизнес-партнёр для собственников</title>
+    <meta name="description" content="Стратегический бизнес-партнер для собственников компаний 10–50 человек. Помогаю выйти из операционки, подсветить слепые зоны и увеличить прибыль.">
+    
+    <!-- Подключение шрифтов -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0d0f12;
+            --card-bg: #16191e;
+            --accent-color: #c5a059; /* Благородное золото */
+            --accent-hover: #dfb86c;
+            --text-main: #f0f2f5;
+            --text-muted: #9ba3af;
+            --border-color: #262a33;
+            --container-width: 1080px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Шапка */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background-color: rgba(13, 15, 18, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        /* Кнопки */
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: #0d0f12;
+            padding: 16px 32px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(197, 160, 89, 0.2);
+        }
+
+        .btn-header {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Секции */
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1, h2, h3 {
+            line-height: 1.25;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        /* Hero Экран */
+        .hero {
+            padding: 100px 0 80px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: 35px;
+        }
+
+        .hero-visual {
+            position: relative;
+            height: 350px;
+            background: linear-gradient(135deg, rgba(197,160,89,0.1) 0%, rgba(22,25,30,1) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Геометрическая графика */
+        .geo-shape {
+            width: 140px;
+            height: 140px;
+            border: 2px solid var(--accent-color);
+            transform: rotate(45deg);
+            position: absolute;
+            opacity: 0.6;
+        }
+
+        .geo-shape-2 {
+            width: 200px;
+            height: 200px;
+            border: 1px dashed var(--text-muted);
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        /* Сетка карточек */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            color: var(--text-main);
+        }
+
+        /* Списки */
+        ul {
+            list-style: none;
+        }
+
+        ul.list-check li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        ul.list-check li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Блок Доверия / О мне */
+        .about-content {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 50px;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+        }
+
+        /* Отзыв */
+        .quote-box {
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--accent-color);
+            padding: 40px;
+            border-radius: 0 8px 8px 0;
+            margin: 40px 0;
+        }
+
+        .quote-text {
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+
+        .quote-author {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        /* FAQ */
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        .faq-item h3 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        /* Финальный CTA */
+        .final-cta {
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-color) 0%, var(--card-bg) 100%);
+            padding: 100px 0;
+        }
+
+        .final-cta p {
+            max-width: 600px;
+            margin: 0 auto 35px;
+        }
+
+        footer {
+            padding: 30px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Адаптивность под мобильные телефоны */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.1rem; }
+            h2 { font-size: 1.6rem; }
+            .hero { grid-template-columns: 1fr; padding: 50px 0; }
+            .hero-visual { display: none; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .about-content { padding: 25px; }
+            .btn { width: 100%; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Привет! Мой сайт работает на GitHub Pages!</h1>
+
+    <!-- Шапка -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">ИЛЬЯ <span>| Партнёр</span></div>
+            <a href="https://t.me/LuckyEX" target="_blank" class="btn btn-header">Написать в TG</a>
+        </div>
+    </header>
+
+    <!-- 1. HERO экран -->
+    <section>
+        <div class="container hero">
+            <div class="hero-text">
+                <h1>Стратегический бизнес-партнёр для собственников, которые знают, что делать — но буксуют</h1>
+                <p>Работаю с предпринимателями с командой 10–50 человек. Не даю готовый план — прихожу как партнёр, который держит фокус на цели и подсвечивает слепые зоны, которые вы сами уже не видите.</p>
+                <a href="https://t.me/LuckyEX" target="_blank" class="btn">Записаться на бесплатную диагностику →</a>
+            </div>
+            <div class="hero-visual">
+                <div class="geo-shape"></div>
+                <div class="geo-shape-2"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. БОЛЬ / С ЧЕМ ПРИХОДЯТ -->
+    <section>
+        <div class="container">
+            <h2>Узнаёте себя?</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <p>Вы уже проходили обучения, читали книги, знаете «как правильно» — но на практике снова откатываетесь назад.</p>
+                </div>
+                <div class="card">
+                    <p>В компании 10–50 человек, но многие ключевые решения по-прежнему держатся на вас одном.</p>
+                </div>
+                <div class="card">
+                    <p>Что-то тормозит рост, но вы либо не видите, что именно, либо избегаете туда смотреть.</p>
+                </div>
+                <div class="card">
+                    <p>Консультанты дают готовые схемы, но без сопровождения всё быстро возвращается на круги своя.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. О МНЕ / ПОЧЕМУ Я -->
+    <section>
+        <div class="container">
+            <h2>Почему стоит работать именно со мной</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p><strong>20+ лет в бизнесе.</strong> Прошёл путь от инженера-строителя до собственного бизнеса и статуса арбитражного управляющего — то есть видел изнутри, как компании теряют деньги и возможности, разбирая чужие банкротства. Это дало то, чего нет у большинства консультантов: понимание, как выглядит бизнес, когда решения откладываются слишком долго.</p>
+                    <p>Параллельно прошёл <strong>сертификацию ICF уровня PCC</strong> — это высокий международный стандарт коучинга, специализация на вопросах, которые помогают собственнику самому увидеть решение, а не получить его в готовом виде.</p>
+                    <p style="color: var(--accent-color); font-weight: 600; margin-bottom: 0;">Я не консультант с методичкой. Я партнёр, который сам через это прошёл — и теперь помогаю не повторять чужие и свои же ошибки.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. ЧТО Я ПРЕДЛАГАЮ -->
+    <section>
+        <div class="container">
+            <h2>Как мы работаем</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 40px;">Двигаемся к конкретной финансовой цели — но по пути находим слабые места бизнеса, которые вы сами обычно не видите или избегаете видеть. Я захожу как партнёр со стороны: детально разбираю, где просадка, и держу фокус, чтобы движение не терялось в операционке.</p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <h3>Формат встреч</h3>
+                    <p>Сессии 1 раз в 1–2 недели для глубокого разбора процессов и решений.</p>
+                </div>
+                <div class="card">
+                    <h3>Фиксация результатов</h3>
+                    <p>Письменная фиксация решений и задач после каждой встречи — прогресс не держится только в вашей голове.</p>
+                </div>
+                <div class="card">
+                    <h3>Работа с командой</h3>
+                    <p>Работа не только с вами лично, но и на операционном уровне команды при необходимости.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. КАК ПРОХОДИТ ПЕРВАЯ ВСТРЕЧА -->
+    <section>
+        <div class="container">
+            <h2>Бесплатная диагностика — 30–40 минут</h2>
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <ul class="list-check">
+                    <li>Рассказываете, что происходит сейчас и куда хотите прийти.</li>
+                    <li>Разбираем, что уже пробовали и почему это не сработало.</li>
+                    <li>Я задаю вопросы, которые обычно не задают себе сами — и вместе находим 1–2 слепых места.</li>
+                    <li>В конце — чёткое наблюдение: что именно тормозит движение к цели.</li>
+                </ul>
+                <p style="margin-top: 20px; font-size: 0.95rem; color: var(--text-muted);"><i>Никакого давления. Если вам откликается — расскажу, как устроена дальнейшая работа.</i></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. ДЛЯ КОГО ЭТО -->
+    <section>
+        <div class="container">
+            <h2>С кем я работаю</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="color: #4cd964;">✅ Подходим друг другу, если:</h3>
+                    <ul class="list-check" style="margin-top: 15px;">
+                        <li>Вы собственник бизнеса с командой 10–50 человек</li>
+                        <li>Вы уже пробовали сами, проходили обучения — но буксуете на практике</li>
+                        <li>Готовы к регулярной системной работе, а не разовой консультации</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 style="color: #ff3b30;">🚫 Не работаю:</h3>
+                    <ul class="list-check" style="margin-top: 15px;">
+                        <li>Компании в остром финансовом кризисе или банкротстве</li>
+                        <li>Бизнесы существенно крупнее 200 млн ₽ оборота в год</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. ОТЗЫВ -->
+    <section>
+        <div class="container">
+            <div class="quote-box">
+                <p class="quote-text">«Ты красавчик, мощная батарейка с правильными вопросами и человечными ценностями. Пусть твой подход и отношение монетизируются в лёгкости, ярко, сильно, усиливаясь от каждой встречи!»</p>
+                <div class="quote-author">— Алексей, собственник бизнеса</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. FAQ -->
+    <section>
+        <div class="container" style="max-width: 800px;">
+            <h2>Часто задаваемые вопросы</h2>
+            <div class="faq-item card">
+                <h3>Вы гарантируете результат?</h3>
+                <p>Нет — и это честно. Я не управляю вашим бизнесом за вас. Моя зона ответственности — качество ваших решений и то, чтобы вы не сбивались с курса к цели. Именно это чаще всего и даёт результат.</p>
+            </div>
+            <div class="faq-item card">
+                <h3>Чем это отличается от консалтинга?</h3>
+                <p>Консультант обычно приносит готовое решение. Я работаю через вопросы и наблюдения — так, чтобы решение оставалось вашим, а не навязанным со стороны. При этом если вижу риск ошибки — прямо говорю об этом.</p>
+            </div>
+            <div class="faq-item card">
+                <h3>Сколько это стоит?</h3>
+                <p>Первая диагностика бесплатна. Дальнейшие условия обсуждаем индивидуально, после того как увидим, подходим ли мы друг другу.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. ФИНАЛЬНЫЙ CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2>Готовы посмотреть на бизнес со стороны?</h2>
+            <p>30–40 минут, без обязательств. Обсудим, что происходит сейчас и что может сдвинуть дело с мёртвой точки.</p>
+            <a href="https://t.me/LuckyEX" target="_blank" class="btn">Записаться на бесплатную диагностику →</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            © Илья | Стратегический бизнес-партнёр
+        </div>
+    </footer>
+
 </body>
 </html>
