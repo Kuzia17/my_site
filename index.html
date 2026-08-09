@@ -43,7 +43,6 @@
             position: relative;
         }
 
-        /* Индикатор прогресса чтения сайта */
         #progress-bar {
             position: fixed;
             top: 0;
@@ -56,7 +55,6 @@
             transition: width 0.1s ease-out;
         }
 
-        /* Объемные фоновые туманности */
         .bg-glow-1 {
             position: fixed;
             top: 20%;
@@ -196,13 +194,11 @@
             -webkit-text-fill-color: var(--accent-gold);
         }
 
-        /* Более компактные отступы секций */
         section {
             padding: 60px 0;
             position: relative;
         }
 
-        /* Плавные переходы с эффектом Blur */
         .reveal {
             opacity: 0;
             transform: translateY(20px) scale(0.98);
@@ -262,7 +258,7 @@
         .hero-canvas-container {
             position: relative;
             width: 100%;
-            height: 380px;
+            height: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -354,7 +350,7 @@
             h2 { font-size: 1.6rem; }
             section { padding: 40px 0; }
             .hero { grid-template-columns: 1fr; padding: 30px 0; }
-            .hero-canvas-container { height: 280px; }
+            .hero-canvas-container { height: 320px; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
             .card { padding: 24px; }
             .stats-grid { grid-template-columns: 1fr; }
@@ -363,10 +359,7 @@
 </head>
 <body>
 
-    <!-- Шкала прогресса просмотра страницы -->
     <div id="progress-bar"></div>
-
-    <!-- Мягкие свечения заднего плана -->
     <div class="bg-glow-1"></div>
     <div class="bg-glow-2"></div>
 
@@ -549,9 +542,8 @@
         </div>
     </footer>
 
-    <!-- Скрипты: 3D-Canvas, Шкала прокрутки и Скролл-анимации -->
+    <!-- Скрипт 3D-распадающегося золотого шестиугольника -->
     <script>
-        // 1. Шкала прогресса скролла
         window.addEventListener('scroll', () => {
             const winScroll = document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -559,7 +551,6 @@
             document.getElementById('progress-bar').style.width = scrolled + '%';
         });
 
-        // 2. 3D-вращение 3 шестиугольников
         const canvas = document.getElementById('hexCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -571,113 +562,132 @@
         window.addEventListener('resize', resizeCanvas);
 
         let mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
-
-        // Ограничиваем максимальное влияние движения мыши, чтобы не было гиперобгонов
         window.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
             const rawX = (e.clientX - rect.left - canvas.width / 2) / canvas.width;
             const rawY = (e.clientY - rect.top - canvas.height / 2) / canvas.height;
-            // Плавно ограничиваем значения от -0.5 до 0.5
-            mouse.targetX = Math.max(-0.5, Math.min(0.5, rawX)) * 0.8;
-            mouse.targetY = Math.max(-0.5, Math.min(0.5, rawY)) * 0.8;
+            mouse.targetX = Math.max(-0.4, Math.min(0.4, rawX));
+            mouse.targetY = Math.max(-0.4, Math.min(0.4, rawY));
         });
 
-        // Класс 3D Шестиугольника
-        class Hex3D {
-            constructor(radius, color, lineWidth, speedX, speedY, speedZ, dash = []) {
-                this.radius = radius;
-                this.color = color;
-                this.lineWidth = lineWidth;
-                this.speedX = speedX;
-                this.speedY = speedY;
-                this.speedZ = speedZ;
-                this.rotX = Math.random() * Math.PI;
-                this.rotY = Math.random() * Math.PI;
-                this.rotZ = Math.random() * Math.PI;
-                this.dash = dash;
-
-                // Создаем вершины 2D шестиугольника
-                this.vertices = [];
-                for (let i = 0; i < 6; i++) {
-                    const angle = (Math.PI / 3) * i;
-                    this.vertices.push({
-                        x: radius * Math.cos(angle),
-                        y: radius * Math.sin(angle),
-                        z: 0
-                    });
-                }
-            }
-
-            update(mouseX, mouseY) {
-                // Вращение по 3 осям с мягкой добавкой от мыши
-                this.rotX += this.speedX + mouseY * 0.01;
-                this.rotY += this.speedY + mouseX * 0.01;
-                this.rotZ += this.speedZ;
-            }
-
-            draw(cx, cy) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.strokeStyle = this.color;
-                ctx.lineWidth = this.lineWidth;
-                if (this.dash.length) ctx.setLineDash(this.dash);
-
-                const projected = this.vertices.map(v => {
-                    // 3D-трансформация по осям X, Y, Z
-                    let y1 = v.y * Math.cos(this.rotX) - v.z * Math.sin(this.rotX);
-                    let z1 = v.y * Math.sin(this.rotX) + v.z * Math.cos(this.rotX);
-
-                    let x2 = v.x * Math.cos(this.rotY) + z1 * Math.sin(this.rotY);
-                    let z2 = -v.x * Math.sin(this.rotY) + z1 * Math.cos(this.rotY);
-
-                    let x3 = x2 * Math.cos(this.rotZ) - y1 * Math.sin(this.rotZ);
-                    let y3 = x2 * Math.sin(this.rotZ) + y1 * Math.cos(this.rotZ);
-
-                    // Проекция перспективы
-                    const perspective = 300 / (300 + z2);
-                    return {
-                        x: cx + x3 * perspective,
-                        y: cy + y3 * perspective
-                    };
-                });
-
-                projected.forEach((p, i) => {
-                    if (i === 0) ctx.moveTo(p.x, p.y);
-                    else ctx.lineTo(p.x, p.y);
-                });
-
-                ctx.closePath();
-                ctx.stroke();
-                ctx.restore();
-            }
-        }
-
-        const hexList = [
-            new Hex3D(100, 'rgba(226, 184, 107, 0.85)', 2, 0.005, 0.007, 0.002),
-            new Hex3D(75, 'rgba(255, 255, 255, 0.45)', 1.5, -0.006, 0.004, -0.005, [6, 6]),
-            new Hex3D(50, 'rgba(156, 163, 175, 0.7)', 1, 0.008, -0.008, 0.004)
+        // Базовые параметры мелких кристаллов
+        const subHexRadius = 36;
+        const subHexes = [
+            { offsetX: 0, offsetY: 0, speedZ: 0.008, color: '#e2b86b' }, // Центр
+            { offsetX: 1, offsetY: 0, speedZ: -0.006, color: '#d4af37' },
+            { offsetX: 0.5, offsetY: 0.866, speedZ: 0.007, color: '#ebd090' },
+            { offsetX: -0.5, offsetY: 0.866, speedZ: -0.005, color: '#c5a059' },
+            { offsetX: -1, offsetY: 0, speedZ: 0.009, color: '#e2b86b' },
+            { offsetX: -0.5, offsetY: -0.866, speedZ: -0.007, color: '#d4af37' },
+            { offsetX: 0.5, offsetY: -0.866, speedZ: 0.006, color: '#f3e1b0' }
         ];
+
+        let time = 0;
+        let globalRotX = 0.4;
+        let globalRotY = 0;
+
+        // Рисование 3D-шестиугольника с гранями (объем)
+        function draw3DHex(cx, cy, radius, rotX, rotY, rotZ, goldColor, explosionFactor) {
+            const vertices = [];
+            for (let i = 0; i < 6; i++) {
+                const a = (Math.PI / 3) * i;
+                vertices.push({
+                    x: radius * Math.cos(a),
+                    y: radius * Math.sin(a),
+                    z: 0
+                });
+            }
+
+            // Матрица поворота
+            const projected = vertices.map(v => {
+                let y1 = v.y * Math.cos(rotX) - v.z * Math.sin(rotX);
+                let z1 = v.y * Math.sin(rotX) + v.z * Math.cos(rotX);
+
+                let x2 = v.x * Math.cos(rotY) + z1 * Math.sin(rotY);
+                let z2 = -v.x * Math.sin(rotY) + z1 * Math.cos(rotY);
+
+                let x3 = x2 * Math.cos(rotZ) - y1 * Math.sin(rotZ);
+                let y3 = x2 * Math.sin(rotZ) + y1 * Math.cos(rotZ);
+
+                const perspective = 350 / (350 + z2);
+                return {
+                    x: cx + x3 * perspective,
+                    y: cy + y3 * perspective,
+                    z: z2
+                };
+            });
+
+            ctx.save();
+            ctx.beginPath();
+            projected.forEach((p, i) => {
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            });
+            ctx.closePath();
+
+            // Создаем объемную золотую заливку с бликом
+            const grad = ctx.createLinearGradient(cx - radius, cy - radius, cx + radius, cy + radius);
+            grad.addColorStop(0, '#fce7b2');
+            grad.addColorStop(0.5, goldColor);
+            grad.addColorStop(1, '#8a6d29');
+
+            ctx.fillStyle = grad;
+            ctx.globalAlpha = 0.85;
+            ctx.fill();
+
+            // Золотой контур
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1 + explosionFactor * 0.5;
+            ctx.stroke();
+            ctx.restore();
+        }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Мягкое инерционное сглаживание движения мыши
             mouse.x += (mouse.targetX - mouse.x) * 0.05;
             mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+            time += 0.02;
+            globalRotY += 0.005 + mouse.x * 0.01;
+            globalRotX = 0.4 + mouse.y * 0.2;
 
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
 
-            hexList.forEach(hex => {
-                hex.update(mouse.x, mouse.y);
-                hex.draw(cx, cy);
+            // Коэффициент разделения: от 0 (монолит) до 1 (распад)
+            const explosion = (Math.sin(time * 0.8) + 1) / 2; 
+            const spreadDistance = subHexRadius * 2.1 * explosion;
+
+            subHexes.forEach((hex, index) => {
+                // Координаты смещения
+                const targetX = hex.offsetX * spreadDistance;
+                const targetY = hex.offsetY * spreadDistance;
+
+                // Вращение в распавшемся состоянии
+                const localRotZ = time * hex.speedZ * 50 * explosion;
+                const localRotX = globalRotX + (explosion * 0.3 * Math.sin(time + index));
+
+                // Рассчитываем итоговую позицию с учетом глобального вращения сцены
+                const sceneX = cx + targetX * Math.cos(globalRotY) - targetY * Math.sin(globalRotY);
+                const sceneY = cy + (targetX * Math.sin(globalRotY) + targetY * Math.cos(globalRotY)) * Math.sin(globalRotX);
+
+                draw3DHex(
+                    sceneX, 
+                    sceneY, 
+                    subHexRadius, 
+                    localRotX, 
+                    globalRotY, 
+                    localRotZ, 
+                    hex.color,
+                    explosion
+                );
             });
 
             requestAnimationFrame(animate);
         }
         animate();
 
-        // 3. Скролл-анимация с эффектом размытия
         const revealElements = document.querySelectorAll('.reveal');
         function checkReveal() {
             const windowHeight = window.innerHeight;
