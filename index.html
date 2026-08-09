@@ -15,8 +15,8 @@
             --bg-dark: #08090a;
             --card-bg: rgba(18, 20, 26, 0.85);
             --card-border: rgba(255, 255, 255, 0.08);
-            --accent-gold: #e2b86b;
-            --accent-gold-glow: rgba(226, 184, 107, 0.15);
+            --accent-gold: #f3c86b;
+            --accent-gold-glow: rgba(243, 200, 107, 0.18);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --container-width: 1100px;
@@ -36,7 +36,7 @@
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(226, 184, 107, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 0%, rgba(243, 200, 107, 0.12) 0%, transparent 50%),
                 linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 100% 100%, 30px 30px, 30px 30px;
@@ -48,10 +48,10 @@
             top: 0;
             left: 0;
             height: 3px;
-            background: linear-gradient(90deg, #c99e4c, #e2b86b, #ffffff);
+            background: linear-gradient(90deg, #d4af37, #f3c86b, #ffffff);
             width: 0%;
             z-index: 1000;
-            box-shadow: 0 0 10px var(--accent-gold);
+            box-shadow: 0 0 12px var(--accent-gold);
             transition: width 0.1s ease-out;
         }
 
@@ -59,9 +59,9 @@
             position: fixed;
             top: 20%;
             left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(226, 184, 107, 0.08) 0%, transparent 70%);
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(243, 200, 107, 0.09) 0%, transparent 70%);
             pointer-events: none;
             z-index: 0;
             filter: blur(60px);
@@ -121,7 +121,7 @@
             padding: 6px 14px;
             border-radius: 100px;
             background: var(--accent-gold-glow);
-            border: 1px solid rgba(226, 184, 107, 0.3);
+            border: 1px solid rgba(243, 200, 107, 0.35);
             color: var(--accent-gold);
             font-size: 0.85rem;
             font-weight: 600;
@@ -142,7 +142,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #e2b86b 0%, #c99e4c 100%);
+            background: linear-gradient(135deg, #f3c86b 0%, #d4af37 100%);
             color: #08090a;
             padding: 16px 32px;
             border-radius: 8px;
@@ -150,14 +150,14 @@
             font-size: 1rem;
             text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(226, 184, 107, 0.25);
+            box-shadow: 0 4px 20px rgba(243, 200, 107, 0.25);
             border: none;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(226, 184, 107, 0.4);
-            background: linear-gradient(135deg, #ebd090 0%, #e2b86b 100%);
+            box-shadow: 0 8px 30px rgba(243, 200, 107, 0.4);
+            background: linear-gradient(135deg, #ffe099 0%, #f3c86b 100%);
         }
 
         .btn-header {
@@ -223,7 +223,7 @@
         }
 
         .card:hover {
-            border-color: rgba(226, 184, 107, 0.4);
+            border-color: rgba(243, 200, 107, 0.45);
             transform: translateY(-3px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-gold-glow);
         }
@@ -241,10 +241,10 @@
         }
 
         .hero {
-            padding: 60px 0 40px;
+            padding: 50px 0 30px;
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 30px;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
             align-items: center;
         }
 
@@ -258,7 +258,7 @@
         .hero-canvas-container {
             position: relative;
             width: 100%;
-            height: 420px;
+            height: 480px; /* Увеличена высота под более крупную 3D модель */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -315,8 +315,8 @@
         }
 
         .quote-card {
-            background: linear-gradient(135deg, rgba(226, 184, 107, 0.05) 0%, rgba(18, 20, 26, 0.8) 100%);
-            border: 1px solid rgba(226, 184, 107, 0.3);
+            background: linear-gradient(135deg, rgba(243, 200, 107, 0.06) 0%, rgba(18, 20, 26, 0.8) 100%);
+            border: 1px solid rgba(243, 200, 107, 0.3);
             border-radius: 20px;
             padding: 40px;
         }
@@ -331,8 +331,8 @@
 
         .cta-box {
             text-align: center;
-            background: radial-gradient(circle at center, rgba(226, 184, 107, 0.15) 0%, rgba(18, 20, 26, 0.95) 100%);
-            border: 1px solid rgba(226, 184, 107, 0.3);
+            background: radial-gradient(circle at center, rgba(243, 200, 107, 0.15) 0%, rgba(18, 20, 26, 0.95) 100%);
+            border: 1px solid rgba(243, 200, 107, 0.35);
             border-radius: 24px;
             padding: 60px 30px;
         }
@@ -350,7 +350,7 @@
             h2 { font-size: 1.6rem; }
             section { padding: 40px 0; }
             .hero { grid-template-columns: 1fr; padding: 30px 0; }
-            .hero-canvas-container { height: 320px; }
+            .hero-canvas-container { height: 360px; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
             .card { padding: 24px; }
             .stats-grid { grid-template-columns: 1fr; }
@@ -455,7 +455,7 @@
     <!-- ДИАГНОСТИКА -->
     <section class="reveal">
         <div class="container">
-            <div class="card" style="border-color: rgba(226, 184, 107, 0.4);">
+            <div class="card" style="border-color: rgba(243, 200, 107, 0.4);">
                 <div class="badge"><span class="badge-dot"></span> Первый шаг</div>
                 <h3 style="font-size: 1.6rem; margin-bottom: 20px;">Бесплатная диагностика — 30–40 минут</h3>
                 <ul class="custom-list">
@@ -542,7 +542,7 @@
         </div>
     </footer>
 
-    <!-- ЧЕСТНЫЙ 3D-ENGINE: Объёмные золотые гироскопические рамки -->
+    <!-- УВЕЛИЧЕННЫЙ 3D-ENGINE КРАСИВОГО ПОЛИРОВАННОГО ЗОЛОТА -->
     <script>
         window.addEventListener('scroll', () => {
             const winScroll = document.documentElement.scrollTop;
@@ -572,19 +572,15 @@
 
         let time = 0;
 
-        // Поворот 3D вектора через углы Эйлера
         function rotate3D(v, rx, ry, rz) {
-            // Rot X
             let y1 = v.y * Math.cos(rx) - v.z * Math.sin(rx);
             let z1 = v.y * Math.sin(rx) + v.z * Math.cos(rx);
             let x1 = v.x;
 
-            // Rot Y
             let x2 = x1 * Math.cos(ry) + z1 * Math.sin(ry);
             let z2 = -x1 * Math.sin(ry) + z1 * Math.cos(ry);
             let y2 = y1;
 
-            // Rot Z
             let x3 = x2 * Math.cos(rz) - y2 * Math.sin(rz);
             let y3 = x2 * Math.sin(rz) + y2 * Math.cos(rz);
             let z3 = z2;
@@ -592,9 +588,8 @@
             return { x: x3, y: y3, z: z3 };
         }
 
-        // Перспективная проекция в 2D
         function project(v, cx, cy) {
-            const fov = 380;
+            const fov = 420;
             const scale = fov / (fov + v.z + 180);
             return {
                 x: cx + v.x * scale,
@@ -613,27 +608,23 @@
             return verts;
         }
 
-        // Отрисовка объёмной рамки с гранями и толщиной
         function draw3DFrame(outerR, innerR, thickness, rx, ry, rz, cx, cy, isSolid) {
             const halfT = thickness / 2;
 
-            // Лицевая и задняя плоскость
             const frontOuter = getHexVerts(outerR, -halfT);
             const backOuter  = getHexVerts(outerR, halfT);
             const frontInner = isSolid ? [] : getHexVerts(innerR, -halfT);
             const backInner  = isSolid ? [] : getHexVerts(innerR, halfT);
 
-            // Поворот точек в 3D
             const pFrontOuter = frontOuter.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
             const pBackOuter  = backOuter.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
             const pFrontInner = frontInner.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
             const pBackInner  = backInner.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
 
-            // 1. Отрисовка боковых граней (толщина металла)
+            // 1. Отрисовка объёмных граней с текстурой золота
             for (let i = 0; i < 6; i++) {
                 const nextI = (i + 1) % 6;
                 
-                // Внешний срез металла
                 ctx.beginPath();
                 ctx.moveTo(pFrontOuter[i].x, pFrontOuter[i].y);
                 ctx.lineTo(pFrontOuter[nextI].x, pFrontOuter[nextI].y);
@@ -645,17 +636,19 @@
                     pFrontOuter[i].x, pFrontOuter[i].y, 
                     pBackOuter[nextI].x, pBackOuter[nextI].y
                 );
-                sideGrad.addColorStop(0, '#8a6627');
-                sideGrad.addColorStop(0.5, '#d4af37');
-                sideGrad.addColorStop(1, '#4a350f');
+                // Оттенки натурального драгоценного металла
+                sideGrad.addColorStop(0, '#a37c2c');
+                sideGrad.addColorStop(0.4, '#f3c86b');
+                sideGrad.addColorStop(0.8, '#d4af37');
+                sideGrad.addColorStop(1, '#3d2b07');
 
                 ctx.fillStyle = sideGrad;
                 ctx.fill();
-                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.strokeStyle = 'rgba(255, 253, 240, 0.25)';
                 ctx.stroke();
             }
 
-            // 2. Лицевая плоскость (золотое кольцо)
+            // 2. Лицевая полированная золотая пластина
             ctx.save();
             ctx.beginPath();
             pFrontOuter.forEach((p, i) => {
@@ -672,30 +665,32 @@
                 ctx.closePath();
             }
 
+            // Золотой спектральный градиент с ярким отражающим бликом
             const faceGrad = ctx.createLinearGradient(cx - outerR, cy - outerR, cx + outerR, cy + outerR);
-            faceGrad.addColorStop(0, '#fff5d6');
-            faceGrad.addColorStop(0.25, '#e2b86b');
-            faceGrad.addColorStop(0.7, '#a37b2c');
-            faceGrad.addColorStop(1, '#523c10');
+            faceGrad.addColorStop(0, '#fffdf0');   // Бело-золотой яркий блик
+            faceGrad.addColorStop(0.2, '#fcedb3');  // Светлое золото
+            faceGrad.addColorStop(0.5, '#f3c86b');  // Насыщенное сусальное золото
+            faceGrad.addColorStop(0.8, '#b88d30');  // Темное глубокое золото
+            faceGrad.addColorStop(1, '#4a350c');    // Теневая кромка
 
             ctx.fillStyle = faceGrad;
             ctx.fill('evenodd');
 
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.3;
+            ctx.lineWidth = 1.4;
             ctx.stroke();
 
             ctx.restore();
         }
 
-        // Слойность: радиусы и оси движения
+        // УВЕЛИЧЕННЫЕ РАЗМЕРЫ РАМОК (радиусы расширены на ~30%)
         const frameLayers = [
-            { outer: 135, inner: 114, thick: 12, rxMul: 1.2, ryMul: 0.8, rzMul: 0.5 },
-            { outer: 112, inner: 92,  thick: 10, rxMul: -1.0, ryMul: 1.3, rzMul: -0.7 },
-            { outer: 90,  inner: 72,  thick: 9,  rxMul: 1.5, ryMul: -1.1, rzMul: 0.9 },
-            { outer: 70,  inner: 52,  thick: 8,  rxMul: -1.2, ryMul: 0.9, rzMul: -1.1 },
-            { outer: 50,  inner: 32,  thick: 7,  rxMul: 0.9, ryMul: -1.4, rzMul: 1.3 },
-            { outer: 30,  inner: 0,   thick: 14, rxMul: -1.6, ryMul: 1.5, rzMul: -1.5, isSolid: true }
+            { outer: 175, inner: 148, thick: 14, rxMul: 1.2, ryMul: 0.8, rzMul: 0.5 },
+            { outer: 145, inner: 120, thick: 12, rxMul: -1.0, ryMul: 1.3, rzMul: -0.7 },
+            { outer: 117, inner: 94,  thick: 10, rxMul: 1.5, ryMul: -1.1, rzMul: 0.9 },
+            { outer: 91,  inner: 68,  thick: 9,  rxMul: -1.2, ryMul: 0.9, rzMul: -1.1 },
+            { outer: 65,  inner: 42,  thick: 8,  rxMul: 0.9, ryMul: -1.4, rzMul: 1.3 },
+            { outer: 39,  inner: 0,   thick: 16, rxMul: -1.6, ryMul: 1.5, rzMul: -1.5, isSolid: true }
         ];
 
         function animate() {
@@ -709,16 +704,13 @@
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
 
-            // Амплитуда 3D расхождения объёмного гироскопа
             const split = (Math.sin(time * 0.8) + 1) / 2; 
 
-            // Базовое общее вращение монолита
             const baseRx = 0.5 + mouse.y * 0.3;
             const baseRy = time * 0.4 + mouse.x * 0.3;
             const baseRz = time * 0.2;
 
             frameLayers.forEach(layer => {
-                // В разложенном состоянии каждая рамка поворачивается по 3D осям вокруг единого центра
                 const rx = baseRx + (layer.rxMul * split * 0.8);
                 const ry = baseRy + (layer.ryMul * split * 1.1);
                 const rz = baseRz + (layer.rzMul * split * 0.9);
