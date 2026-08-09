@@ -542,7 +542,7 @@
         </div>
     </footer>
 
-    <!-- Скрипт 3D-распадающегося золотого шестиугольника -->
+    <!-- 3D Canvas Концентрических золотых рамок-шестиугольников -->
     <script>
         window.addEventListener('scroll', () => {
             const winScroll = document.documentElement.scrollTop;
@@ -570,75 +570,80 @@
             mouse.targetY = Math.max(-0.4, Math.min(0.4, rawY));
         });
 
-        // Базовые параметры мелких кристаллов
-        const subHexRadius = 36;
-        const subHexes = [
-            { offsetX: 0, offsetY: 0, speedZ: 0.008, color: '#e2b86b' }, // Центр
-            { offsetX: 1, offsetY: 0, speedZ: -0.006, color: '#d4af37' },
-            { offsetX: 0.5, offsetY: 0.866, speedZ: 0.007, color: '#ebd090' },
-            { offsetX: -0.5, offsetY: 0.866, speedZ: -0.005, color: '#c5a059' },
-            { offsetX: -1, offsetY: 0, speedZ: 0.009, color: '#e2b86b' },
-            { offsetX: -0.5, offsetY: -0.866, speedZ: -0.007, color: '#d4af37' },
-            { offsetX: 0.5, offsetY: -0.866, speedZ: 0.006, color: '#f3e1b0' }
-        ];
-
         let time = 0;
-        let globalRotX = 0.4;
         let globalRotY = 0;
 
-        // Рисование 3D-шестиугольника с гранями (объем)
-        function draw3DHex(cx, cy, radius, rotX, rotY, rotZ, goldColor, explosionFactor) {
-            const vertices = [];
+        // Генерация точек шестиугольника
+        function getHexVertices(radius) {
+            const verts = [];
             for (let i = 0; i < 6; i++) {
                 const a = (Math.PI / 3) * i;
-                vertices.push({
-                    x: radius * Math.cos(a),
-                    y: radius * Math.sin(a),
-                    z: 0
-                });
+                verts.push({ x: radius * Math.cos(a), y: radius * Math.sin(a) });
             }
+            return verts;
+        }
 
-            // Матрица поворота
-            const projected = vertices.map(v => {
-                let y1 = v.y * Math.cos(rotX) - v.z * Math.sin(rotX);
-                let z1 = v.y * Math.sin(rotX) + v.z * Math.cos(rotX);
+        // Проекция 3D точек на 2D Canvas
+        function project3D(x, y, z, rotX, rotY, rotZ, cx, cy) {
+            let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
+            let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
 
-                let x2 = v.x * Math.cos(rotY) + z1 * Math.sin(rotY);
-                let z2 = -v.x * Math.sin(rotY) + z1 * Math.cos(rotY);
+            let x2 = x * Math.cos(rotY) + z1 * Math.sin(rotY);
+            let z2 = -x * Math.sin(rotY) + z1 * Math.cos(rotY);
 
-                let x3 = x2 * Math.cos(rotZ) - y1 * Math.sin(rotZ);
-                let y3 = x2 * Math.sin(rotZ) + y1 * Math.cos(rotZ);
+            let x3 = x2 * Math.cos(rotZ) - y1 * Math.sin(rotZ);
+            let y3 = x2 * Math.sin(rotZ) + y1 * Math.cos(rotZ);
 
-                const perspective = 350 / (350 + z2);
-                return {
-                    x: cx + x3 * perspective,
-                    y: cy + y3 * perspective,
-                    z: z2
-                };
-            });
+            const perspective = 400 / (400 + z2);
+            return {
+                x: cx + x3 * perspective,
+                y: cy + y3 * perspective,
+                z: z2
+            };
+        }
+
+        // Рисование объемной плотной золотой рамки
+        function drawRingFrame(outerR, innerR, offsetZ, rotX, rotY, rotZ, cx, cy, isCenterSolid) {
+            const outerVerts = getHexVertices(outerR);
+            const innerVerts = isCenterSolid ? [] : getHexVertices(innerR);
+
+            const pOuter = outerVerts.map(v => project3D(v.x, v.y, offsetZ, rotX, rotY, rotZ, cx, cy));
+            const pInner = innerVerts.map(v => project3D(v.x, v.y, offsetZ, rotX, rotY, rotZ, cx, cy));
 
             ctx.save();
             ctx.beginPath();
-            projected.forEach((p, i) => {
+
+            // Внешний контур
+            pOuter.forEach((p, i) => {
                 if (i === 0) ctx.moveTo(p.x, p.y);
                 else ctx.lineTo(p.x, p.y);
             });
             ctx.closePath();
 
-            // Создаем объемную золотую заливку с бликом
-            const grad = ctx.createLinearGradient(cx - radius, cy - radius, cx + radius, cy + radius);
-            grad.addColorStop(0, '#fce7b2');
-            grad.addColorStop(0.5, goldColor);
-            grad.addColorStop(1, '#8a6d29');
+            // Вырез внутреннего контура (отрисовка дырки для создания рамки)
+            if (!isCenterSolid) {
+                for (let i = pInner.length - 1; i >= 0; i--) {
+                    if (i === pInner.length - 1) ctx.moveTo(pInner[i].x, pInner[i].y);
+                    else ctx.lineTo(pInner[i].x, pInner[i].y);
+                }
+                ctx.closePath();
+            }
+
+            // Плотный реалистичный золотой градиент (без прозрачности)
+            const grad = ctx.createLinearGradient(cx - outerR, cy - outerR, cx + outerR, cy + outerR);
+            grad.addColorStop(0, '#fff3d1'); // Яркий блик
+            grad.addColorStop(0.2, '#e2b86b'); // Основное золото
+            grad.addColorStop(0.6, '#b88c3a'); // Тёмное золото
+            grad.addColorStop(1, '#664a13'); // Глубокая тень
 
             ctx.fillStyle = grad;
-            ctx.globalAlpha = 0.85;
-            ctx.fill();
+            ctx.fill('evenodd'); // Магия даже-нечетного правила для вырезания отверстия
 
-            // Золотой контур
+            // Плотный блестящий контур
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1 + explosionFactor * 0.5;
+            ctx.lineWidth = 1.2;
             ctx.stroke();
+
             ctx.restore();
         }
 
@@ -649,38 +654,38 @@
             mouse.y += (mouse.targetY - mouse.y) * 0.05;
 
             time += 0.02;
-            globalRotY += 0.005 + mouse.x * 0.01;
-            globalRotX = 0.4 + mouse.y * 0.2;
+            globalRotY += 0.008 + mouse.x * 0.01;
+            const globalRotX = 0.5 + mouse.y * 0.2;
 
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
 
-            // Коэффициент разделения: от 0 (монолит) до 1 (распад)
-            const explosion = (Math.sin(time * 0.8) + 1) / 2; 
-            const spreadDistance = subHexRadius * 2.1 * explosion;
+            // Амплитуда выдвижения рамок вдоль оси Z (от монолита к выдвинутым слоям)
+            const splitFactor = (Math.sin(time * 0.9) + 1) / 2; 
 
-            subHexes.forEach((hex, index) => {
-                // Координаты смещения
-                const targetX = hex.offsetX * spreadDistance;
-                const targetY = hex.offsetY * spreadDistance;
+            // Настройки 6 слоев (5 рамок + 1 цельный центр)
+            const layers = [
+                { outer: 135, inner: 112, zOffset: 60 },
+                { outer: 110, inner: 88,  zOffset: 36 },
+                { outer: 86,  inner: 66,  zOffset: 12 },
+                { outer: 64,  inner: 46,  zOffset: -12 },
+                { outer: 44,  inner: 26,  zOffset: -36 },
+                { outer: 24,  inner: 0,   zOffset: -60, isSolid: true } // Центр
+            ];
 
-                // Вращение в распавшемся состоянии
-                const localRotZ = time * hex.speedZ * 50 * explosion;
-                const localRotX = globalRotX + (explosion * 0.3 * Math.sin(time + index));
-
-                // Рассчитываем итоговую позицию с учетом глобального вращения сцены
-                const sceneX = cx + targetX * Math.cos(globalRotY) - targetY * Math.sin(globalRotY);
-                const sceneY = cy + (targetX * Math.sin(globalRotY) + targetY * Math.cos(globalRotY)) * Math.sin(globalRotX);
-
-                draw3DHex(
-                    sceneX, 
-                    sceneY, 
-                    subHexRadius, 
-                    localRotX, 
+            // Рисуем рамки с учетом правильной глубины
+            layers.forEach((layer) => {
+                const z = layer.zOffset * splitFactor;
+                drawRingFrame(
+                    layer.outer, 
+                    layer.inner, 
+                    z, 
+                    globalRotX, 
                     globalRotY, 
-                    localRotZ, 
-                    hex.color,
-                    explosion
+                    0, 
+                    cx, 
+                    cy, 
+                    layer.isSolid || false
                 );
             });
 
