@@ -258,7 +258,7 @@
         .hero-canvas-container {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 420px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -542,7 +542,7 @@
         </div>
     </footer>
 
-    <!-- Скрипт 3D-рамок с независимым соосным вращением -->
+    <!-- ЧЕСТНЫЙ 3D-ENGINE: Объёмные золотые гироскопические рамки -->
     <script>
         window.addEventListener('scroll', () => {
             const winScroll = document.documentElement.scrollTop;
@@ -572,81 +572,130 @@
 
         let time = 0;
 
-        function getHexVertices(radius) {
+        // Поворот 3D вектора через углы Эйлера
+        function rotate3D(v, rx, ry, rz) {
+            // Rot X
+            let y1 = v.y * Math.cos(rx) - v.z * Math.sin(rx);
+            let z1 = v.y * Math.sin(rx) + v.z * Math.cos(rx);
+            let x1 = v.x;
+
+            // Rot Y
+            let x2 = x1 * Math.cos(ry) + z1 * Math.sin(ry);
+            let z2 = -x1 * Math.sin(ry) + z1 * Math.cos(ry);
+            let y2 = y1;
+
+            // Rot Z
+            let x3 = x2 * Math.cos(rz) - y2 * Math.sin(rz);
+            let y3 = x2 * Math.sin(rz) + y2 * Math.cos(rz);
+            let z3 = z2;
+
+            return { x: x3, y: y3, z: z3 };
+        }
+
+        // Перспективная проекция в 2D
+        function project(v, cx, cy) {
+            const fov = 380;
+            const scale = fov / (fov + v.z + 180);
+            return {
+                x: cx + v.x * scale,
+                y: cy + v.y * scale,
+                z: v.z,
+                scale: scale
+            };
+        }
+
+        function getHexVerts(r, z) {
             const verts = [];
             for (let i = 0; i < 6; i++) {
                 const a = (Math.PI / 3) * i;
-                verts.push({ x: radius * Math.cos(a), y: radius * Math.sin(a) });
+                verts.push({ x: r * Math.cos(a), y: r * Math.sin(a), z: z });
             }
             return verts;
         }
 
-        function project3D(x, y, z, rotX, rotY, rotZ, cx, cy) {
-            let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
-            let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
+        // Отрисовка объёмной рамки с гранями и толщиной
+        function draw3DFrame(outerR, innerR, thickness, rx, ry, rz, cx, cy, isSolid) {
+            const halfT = thickness / 2;
 
-            let x2 = x * Math.cos(rotY) + z1 * Math.sin(rotY);
-            let z2 = -x * Math.sin(rotY) + z1 * Math.cos(rotY);
+            // Лицевая и задняя плоскость
+            const frontOuter = getHexVerts(outerR, -halfT);
+            const backOuter  = getHexVerts(outerR, halfT);
+            const frontInner = isSolid ? [] : getHexVerts(innerR, -halfT);
+            const backInner  = isSolid ? [] : getHexVerts(innerR, halfT);
 
-            let x3 = x2 * Math.cos(rotZ) - y1 * Math.sin(rotZ);
-            let y3 = x2 * Math.sin(rotZ) + y1 * Math.cos(rotZ);
+            // Поворот точек в 3D
+            const pFrontOuter = frontOuter.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
+            const pBackOuter  = backOuter.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
+            const pFrontInner = frontInner.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
+            const pBackInner  = backInner.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
 
-            const perspective = 400 / (400 + z2);
-            return {
-                x: cx + x3 * perspective,
-                y: cy + y3 * perspective,
-                z: z2
-            };
-        }
+            // 1. Отрисовка боковых граней (толщина металла)
+            for (let i = 0; i < 6; i++) {
+                const nextI = (i + 1) % 6;
+                
+                // Внешний срез металла
+                ctx.beginPath();
+                ctx.moveTo(pFrontOuter[i].x, pFrontOuter[i].y);
+                ctx.lineTo(pFrontOuter[nextI].x, pFrontOuter[nextI].y);
+                ctx.lineTo(pBackOuter[nextI].x, pBackOuter[nextI].y);
+                ctx.lineTo(pBackOuter[i].x, pBackOuter[i].y);
+                ctx.closePath();
 
-        function drawRingFrame(outerR, innerR, offsetZ, rotX, rotY, rotZ, cx, cy, isCenterSolid) {
-            const outerVerts = getHexVertices(outerR);
-            const innerVerts = isCenterSolid ? [] : getHexVertices(innerR);
+                const sideGrad = ctx.createLinearGradient(
+                    pFrontOuter[i].x, pFrontOuter[i].y, 
+                    pBackOuter[nextI].x, pBackOuter[nextI].y
+                );
+                sideGrad.addColorStop(0, '#8a6627');
+                sideGrad.addColorStop(0.5, '#d4af37');
+                sideGrad.addColorStop(1, '#4a350f');
 
-            const pOuter = outerVerts.map(v => project3D(v.x, v.y, offsetZ, rotX, rotY, rotZ, cx, cy));
-            const pInner = innerVerts.map(v => project3D(v.x, v.y, offsetZ, rotX, rotY, rotZ, cx, cy));
+                ctx.fillStyle = sideGrad;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.stroke();
+            }
 
+            // 2. Лицевая плоскость (золотое кольцо)
             ctx.save();
             ctx.beginPath();
-
-            pOuter.forEach((p, i) => {
+            pFrontOuter.forEach((p, i) => {
                 if (i === 0) ctx.moveTo(p.x, p.y);
                 else ctx.lineTo(p.x, p.y);
             });
             ctx.closePath();
 
-            if (!isCenterSolid) {
-                for (let i = pInner.length - 1; i >= 0; i--) {
-                    if (i === pInner.length - 1) ctx.moveTo(pInner[i].x, pInner[i].y);
-                    else ctx.lineTo(pInner[i].x, pInner[i].y);
+            if (!isSolid) {
+                for (let i = pFrontInner.length - 1; i >= 0; i--) {
+                    if (i === pFrontInner.length - 1) ctx.moveTo(pFrontInner[i].x, pFrontInner[i].y);
+                    else ctx.lineTo(pFrontInner[i].x, pFrontInner[i].y);
                 }
                 ctx.closePath();
             }
 
-            const grad = ctx.createLinearGradient(cx - outerR, cy - outerR, cx + outerR, cy + outerR);
-            grad.addColorStop(0, '#fff3d1');
-            grad.addColorStop(0.2, '#e2b86b');
-            grad.addColorStop(0.6, '#b88c3a');
-            grad.addColorStop(1, '#664a13');
+            const faceGrad = ctx.createLinearGradient(cx - outerR, cy - outerR, cx + outerR, cy + outerR);
+            faceGrad.addColorStop(0, '#fff5d6');
+            faceGrad.addColorStop(0.25, '#e2b86b');
+            faceGrad.addColorStop(0.7, '#a37b2c');
+            faceGrad.addColorStop(1, '#523c10');
 
-            ctx.fillStyle = grad;
+            ctx.fillStyle = faceGrad;
             ctx.fill('evenodd');
 
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.2;
+            ctx.lineWidth = 1.3;
             ctx.stroke();
 
             ctx.restore();
         }
 
-        // Параметры 6 слоев (скорость вращения своя у каждой рамки)
-        const layers = [
-            { outer: 135, inner: 112, zOffset: 65,  rotSpeedZ: 0.008,  rotSpeedX: 0.003 },
-            { outer: 110, inner: 88,  zOffset: 39,  rotSpeedZ: -0.012, rotSpeedX: -0.004 },
-            { outer: 86,  inner: 66,  zOffset: 13,  rotSpeedZ: 0.015,  rotSpeedX: 0.005 },
-            { outer: 64,  inner: 46,  zOffset: -13, rotSpeedZ: -0.018, rotSpeedX: -0.003 },
-            { outer: 44,  inner: 26,  zOffset: -39, rotSpeedZ: 0.022,  rotSpeedX: 0.006 },
-            { outer: 24,  inner: 0,   zOffset: -65, rotSpeedZ: -0.025, rotSpeedX: -0.005, isSolid: true }
+        // Слойность: радиусы и оси движения
+        const frameLayers = [
+            { outer: 135, inner: 114, thick: 12, rxMul: 1.2, ryMul: 0.8, rzMul: 0.5 },
+            { outer: 112, inner: 92,  thick: 10, rxMul: -1.0, ryMul: 1.3, rzMul: -0.7 },
+            { outer: 90,  inner: 72,  thick: 9,  rxMul: 1.5, ryMul: -1.1, rzMul: 0.9 },
+            { outer: 70,  inner: 52,  thick: 8,  rxMul: -1.2, ryMul: 0.9, rzMul: -1.1 },
+            { outer: 50,  inner: 32,  thick: 7,  rxMul: 0.9, ryMul: -1.4, rzMul: 1.3 },
+            { outer: 30,  inner: 0,   thick: 14, rxMul: -1.6, ryMul: 1.5, rzMul: -1.5, isSolid: true }
         ];
 
         function animate() {
@@ -655,31 +704,32 @@
             mouse.x += (mouse.targetX - mouse.x) * 0.05;
             mouse.y += (mouse.targetY - mouse.y) * 0.05;
 
-            time += 0.02;
+            time += 0.015;
 
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
 
-            // Амплитуда разделения слоев: от 0 (монолит) до 1 (полный независимый разворот)
-            const splitFactor = (Math.sin(time * 0.8) + 1) / 2; 
+            // Амплитуда 3D расхождения объёмного гироскопа
+            const split = (Math.sin(time * 0.8) + 1) / 2; 
 
-            const globalRotX = 0.5 + mouse.y * 0.2;
-            const globalRotY = time * 0.008 + mouse.x * 0.01;
+            // Базовое общее вращение монолита
+            const baseRx = 0.5 + mouse.y * 0.3;
+            const baseRy = time * 0.4 + mouse.x * 0.3;
+            const baseRz = time * 0.2;
 
-            layers.forEach((layer) => {
-                const z = layer.zOffset * splitFactor;
-                
-                // Независимое вращение вокруг собственного центра каждого слоя в фазе разделения
-                const localRotZ = time * layer.rotSpeedZ * 60 * splitFactor;
-                const localRotX = globalRotX + (layer.rotSpeedX * 40 * splitFactor);
+            frameLayers.forEach(layer => {
+                // В разложенном состоянии каждая рамка поворачивается по 3D осям вокруг единого центра
+                const rx = baseRx + (layer.rxMul * split * 0.8);
+                const ry = baseRy + (layer.ryMul * split * 1.1);
+                const rz = baseRz + (layer.rzMul * split * 0.9);
 
-                drawRingFrame(
+                draw3DFrame(
                     layer.outer, 
                     layer.inner, 
-                    z, 
-                    localRotX, 
-                    globalRotY, 
-                    localRotZ, 
+                    layer.thick, 
+                    rx, 
+                    ry, 
+                    rz, 
                     cx, 
                     cy, 
                     layer.isSolid || false
