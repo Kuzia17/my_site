@@ -152,6 +152,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(243, 200, 107, 0.25);
             border: none;
+            cursor: pointer;
         }
 
         .btn:hover {
@@ -243,7 +244,7 @@
         .hero {
             padding: 50px 0 30px;
             display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
+            grid-template-columns: 1.1fr 0.9fr;
             gap: 20px;
             align-items: center;
         }
@@ -255,10 +256,11 @@
             max-width: 580px;
         }
 
+        /* Контейнер под двойную 3D-графику */
         .hero-canvas-container {
             position: relative;
             width: 100%;
-            height: 480px; /* Увеличена высота под более крупную 3D модель */
+            height: 680px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -350,7 +352,7 @@
             h2 { font-size: 1.6rem; }
             section { padding: 40px 0; }
             .hero { grid-template-columns: 1fr; padding: 30px 0; }
-            .hero-canvas-container { height: 360px; }
+            .hero-canvas-container { height: 550px; }
             .grid-2, .grid-3 { grid-template-columns: 1fr; }
             .card { padding: 24px; }
             .stats-grid { grid-template-columns: 1fr; }
@@ -366,7 +368,7 @@
     <header>
         <div class="container header-content">
             <div class="logo">ИЛЬЯ <span>| Партнёр</span></div>
-            <a href="https://t.me/LuckyEX" target="_blank" class="btn btn-header">Написать в TG</a>
+            <a href="https://t.me/LuckyEX" target="_blank" class="btn btn-header">Запись на диагностику</a>
         </div>
     </header>
 
@@ -542,7 +544,7 @@
         </div>
     </footer>
 
-    <!-- УВЕЛИЧЕННЫЙ 3D-ENGINE КРАСИВОГО ПОЛИРОВАННОГО ЗОЛОТА -->
+    <!-- ДВОЙНОЙ 3D-ENGINE: Шестиугольник + Прозрачный Куб с пересыпающимися золотыми монетами -->
     <script>
         window.addEventListener('scroll', () => {
             const winScroll = document.documentElement.scrollTop;
@@ -566,12 +568,13 @@
             const rect = canvas.getBoundingClientRect();
             const rawX = (e.clientX - rect.left - canvas.width / 2) / canvas.width;
             const rawY = (e.clientY - rect.top - canvas.height / 2) / canvas.height;
-            mouse.targetX = Math.max(-0.4, Math.min(0.4, rawX));
-            mouse.targetY = Math.max(-0.4, Math.min(0.4, rawY));
+            mouse.targetX = Math.max(-0.45, Math.min(0.45, rawX));
+            mouse.targetY = Math.max(-0.45, Math.min(0.45, rawY));
         });
 
         let time = 0;
 
+        // Вспомогательная математика 3D поворота
         function rotate3D(v, rx, ry, rz) {
             let y1 = v.y * Math.cos(rx) - v.z * Math.sin(rx);
             let z1 = v.y * Math.sin(rx) + v.z * Math.cos(rx);
@@ -589,8 +592,8 @@
         }
 
         function project(v, cx, cy) {
-            const fov = 420;
-            const scale = fov / (fov + v.z + 180);
+            const fov = 400;
+            const scale = fov / (fov + v.z + 200);
             return {
                 x: cx + v.x * scale,
                 y: cy + v.y * scale,
@@ -599,6 +602,7 @@
             };
         }
 
+        // --- 1. ВЕРХНИЙ ЭЛЕМЕНТ: ЗОЛОТОЙ ШЕСТИУГОЛЬНИК ---
         function getHexVerts(r, z) {
             const verts = [];
             for (let i = 0; i < 6; i++) {
@@ -608,23 +612,18 @@
             return verts;
         }
 
-        function draw3DFrame(outerR, innerR, thickness, rx, ry, rz, cx, cy, isSolid) {
+        function draw3DHexFrame(outerR, innerR, thickness, rx, ry, rz, cx, cy, isSolid) {
             const halfT = thickness / 2;
-
             const frontOuter = getHexVerts(outerR, -halfT);
             const backOuter  = getHexVerts(outerR, halfT);
             const frontInner = isSolid ? [] : getHexVerts(innerR, -halfT);
-            const backInner  = isSolid ? [] : getHexVerts(innerR, halfT);
 
             const pFrontOuter = frontOuter.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
             const pBackOuter  = backOuter.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
             const pFrontInner = frontInner.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
-            const pBackInner  = backInner.map(v => project(rotate3D(v, rx, ry, rz), cx, cy));
 
-            // 1. Отрисовка объёмных граней с текстурой золота
             for (let i = 0; i < 6; i++) {
                 const nextI = (i + 1) % 6;
-                
                 ctx.beginPath();
                 ctx.moveTo(pFrontOuter[i].x, pFrontOuter[i].y);
                 ctx.lineTo(pFrontOuter[nextI].x, pFrontOuter[nextI].y);
@@ -636,7 +635,6 @@
                     pFrontOuter[i].x, pFrontOuter[i].y, 
                     pBackOuter[nextI].x, pBackOuter[nextI].y
                 );
-                // Оттенки натурального драгоценного металла
                 sideGrad.addColorStop(0, '#a37c2c');
                 sideGrad.addColorStop(0.4, '#f3c86b');
                 sideGrad.addColorStop(0.8, '#d4af37');
@@ -644,11 +642,10 @@
 
                 ctx.fillStyle = sideGrad;
                 ctx.fill();
-                ctx.strokeStyle = 'rgba(255, 253, 240, 0.25)';
+                ctx.strokeStyle = 'rgba(255, 253, 240, 0.2)';
                 ctx.stroke();
             }
 
-            // 2. Лицевая полированная золотая пластина
             ctx.save();
             ctx.beginPath();
             pFrontOuter.forEach((p, i) => {
@@ -665,73 +662,231 @@
                 ctx.closePath();
             }
 
-            // Золотой спектральный градиент с ярким отражающим бликом
             const faceGrad = ctx.createLinearGradient(cx - outerR, cy - outerR, cx + outerR, cy + outerR);
-            faceGrad.addColorStop(0, '#fffdf0');   // Бело-золотой яркий блик
-            faceGrad.addColorStop(0.2, '#fcedb3');  // Светлое золото
-            faceGrad.addColorStop(0.5, '#f3c86b');  // Насыщенное сусальное золото
-            faceGrad.addColorStop(0.8, '#b88d30');  // Темное глубокое золото
-            faceGrad.addColorStop(1, '#4a350c');    // Теневая кромка
+            faceGrad.addColorStop(0, '#fffdf0');
+            faceGrad.addColorStop(0.2, '#fcedb3');
+            faceGrad.addColorStop(0.5, '#f3c86b');
+            faceGrad.addColorStop(0.8, '#b88d30');
+            faceGrad.addColorStop(1, '#4a350c');
 
             ctx.fillStyle = faceGrad;
             ctx.fill('evenodd');
 
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.4;
+            ctx.lineWidth = 1.3;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        const hexLayers = [
+            { outer: 125, inner: 104, thick: 11, rxMul: 1.2, ryMul: 0.8, rzMul: 0.5 },
+            { outer: 102, inner: 84,  thick: 9,  rxMul: -1.0, ryMul: 1.3, rzMul: -0.7 },
+            { outer: 82,  inner: 65,  thick: 8,  rxMul: 1.5, ryMul: -1.1, rzMul: 0.9 },
+            { outer: 63,  inner: 47,  thick: 7,  rxMul: -1.2, ryMul: 0.9, rzMul: -1.1 },
+            { outer: 45,  inner: 29,  thick: 6,  rxMul: 0.9, ryMul: -1.4, rzMul: 1.3 },
+            { outer: 27,  inner: 0,   thick: 12, rxMul: -1.6, ryMul: 1.5, rzMul: -1.5, isSolid: true }
+        ];
+
+        // --- 2. НИЖНИЙ ЭЛЕМЕНТ: ПРОЗРАЧНЫЙ КУБ С МОНЕТАМИ ---
+        const cubeSize = 75; // Полуразмер куба
+        const coins = [];
+        const numCoins = 22;
+
+        // Создаем монеты с начальными локальными позициями внутри куба
+        for (let i = 0; i < numCoins; i++) {
+            coins.push({
+                x: (Math.random() - 0.5) * (cubeSize * 1.4),
+                y: (Math.random() - 0.5) * (cubeSize * 1.4),
+                z: (Math.random() - 0.5) * (cubeSize * 1.4),
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                vz: (Math.random() - 0.5) * 0.5,
+                radius: 11
+            });
+        }
+
+        // Вершины 3D куба
+        const cubeVerts = [
+            { x: -cubeSize, y: -cubeSize, z: -cubeSize },
+            { x:  cubeSize, y: -cubeSize, z: -cubeSize },
+            { x:  cubeSize, y:  cubeSize, z: -cubeSize },
+            { x: -cubeSize, y:  cubeSize, z: -cubeSize },
+            { x: -cubeSize, y: -cubeSize, z:  cubeSize },
+            { x:  cubeSize, y: -cubeSize, z:  cubeSize },
+            { x:  cubeSize, y:  cubeSize, z:  cubeSize },
+            { x: -cubeSize, y:  cubeSize, z:  cubeSize }
+        ];
+
+        // 6 граней куба (вершины по часовой стрелке)
+        const cubeFaces = [
+            { indices: [0, 1, 2, 3], norm: { x: 0, y: 0, z: -1 } }, // Задняя
+            { indices: [4, 7, 6, 5], norm: { x: 0, y: 0, z: 1 } },  // Передняя
+            { indices: [0, 3, 7, 4], norm: { x: -1, y: 0, z: 0 } }, // Левая
+            { indices: [1, 5, 6, 2], norm: { x: 1, y: 0, z: 0 } },  // Правая
+            { indices: [0, 4, 5, 1], norm: { x: 0, y: -1, z: 0 } }, // Верхняя
+            { indices: [3, 2, 6, 7], norm: { x: 0, y: 1, z: 0 } }   // Нижняя
+        ];
+
+        // Рисование одной монеты
+        function drawCoin(p) {
+            ctx.save();
+            ctx.beginPath();
+            const r = p.radius * p.scale;
+            ctx.arc(p.x, p.y, Math.max(1, r), 0, Math.PI * 2);
+
+            // Градиент чеканного полированного золота с затемнением на фаске
+            const coinGrad = ctx.createRadialGradient(
+                p.x - r * 0.3, p.y - r * 0.3, r * 0.1,
+                p.x, p.y, r
+            );
+            coinGrad.addColorStop(0, '#ffffff');    // Блик
+            coinGrad.addColorStop(0.2, '#fff2c2');  // Светло-золотой
+            coinGrad.addColorStop(0.55, '#f3c86b'); // Основной золотой
+            coinGrad.addColorStop(0.85, '#8a641c'); // Темная фаска по краям
+            coinGrad.addColorStop(1, '#332104');    // Глубокое затемнение ребра
+
+            ctx.fillStyle = coinGrad;
+            ctx.fill();
+
+            // Тонкий светлый контур
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Внутреннее тиснение монеты
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, Math.max(1, r * 0.65), 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(138, 100, 28, 0.5)';
             ctx.stroke();
 
             ctx.restore();
         }
 
-        // УВЕЛИЧЕННЫЕ РАЗМЕРЫ РАМОК (радиусы расширены на ~30%)
-        const frameLayers = [
-            { outer: 175, inner: 148, thick: 14, rxMul: 1.2, ryMul: 0.8, rzMul: 0.5 },
-            { outer: 145, inner: 120, thick: 12, rxMul: -1.0, ryMul: 1.3, rzMul: -0.7 },
-            { outer: 117, inner: 94,  thick: 10, rxMul: 1.5, ryMul: -1.1, rzMul: 0.9 },
-            { outer: 91,  inner: 68,  thick: 9,  rxMul: -1.2, ryMul: 0.9, rzMul: -1.1 },
-            { outer: 65,  inner: 42,  thick: 8,  rxMul: 0.9, ryMul: -1.4, rzMul: 1.3 },
-            { outer: 39,  inner: 0,   thick: 16, rxMul: -1.6, ryMul: 1.5, rzMul: -1.5, isSolid: true }
-        ];
-
+        // Главный цикл анимации
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             mouse.x += (mouse.targetX - mouse.x) * 0.05;
             mouse.y += (mouse.targetY - mouse.y) * 0.05;
-
             time += 0.015;
 
             const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
+            const topCy = canvas.height * 0.30; // Центр шестиугольника
+            const botCy = canvas.height * 0.72; // Центр стеклянного куба
 
-            const split = (Math.sin(time * 0.8) + 1) / 2; 
-
+            // --- 1. РЕНДЕР ШЕСТИУГОЛЬНИКА ---
+            const hexSplit = (Math.sin(time * 0.8) + 1) / 2;
             const baseRx = 0.5 + mouse.y * 0.3;
             const baseRy = time * 0.4 + mouse.x * 0.3;
             const baseRz = time * 0.2;
 
-            frameLayers.forEach(layer => {
-                const rx = baseRx + (layer.rxMul * split * 0.8);
-                const ry = baseRy + (layer.ryMul * split * 1.1);
-                const rz = baseRz + (layer.rzMul * split * 0.9);
+            hexLayers.forEach(layer => {
+                const rx = baseRx + (layer.rxMul * hexSplit * 0.8);
+                const ry = baseRy + (layer.ryMul * hexSplit * 1.1);
+                const rz = baseRz + (layer.rzMul * hexSplit * 0.9);
 
-                draw3DFrame(
+                draw3DHexFrame(
                     layer.outer, 
                     layer.inner, 
                     layer.thick, 
-                    rx, 
-                    ry, 
-                    rz, 
-                    cx, 
-                    cy, 
+                    rx, ry, rz, 
+                    cx, topCy, 
                     layer.isSolid || false
                 );
+            });
+
+            // --- 2. РЕНДЕР ПРОЗРАЧНОГО КУБА С МОНЕТАМИ ---
+            const cubeRx = 0.4 + mouse.y * 0.8;
+            const cubeRy = time * 0.5 + mouse.x * 0.9;
+            const cubeRz = Math.sin(time * 0.3) * 0.2;
+
+            // Расчет вектора гравитации внутри куба в зависимости от разворота
+            const invRot = rotate3D({ x: 0, y: 0.35, z: 0 }, -cubeRx, -cubeRy, -cubeRz);
+
+            // Обновляем физику монет (пересыпание и отскоки от граней куба)
+            coins.forEach(c => {
+                c.vx += invRot.x;
+                c.vy += invRot.y;
+                c.vz += invRot.z;
+
+                c.x += c.vx;
+                c.y += c.vy;
+                c.z += c.vz;
+
+                c.vx *= 0.96; // Трение
+                c.vy *= 0.96;
+                c.vz *= 0.96;
+
+                // Соударения со стенками прозрачного куба
+                const limit = cubeSize - c.radius;
+                if (c.x > limit)  { c.x = limit;  c.vx *= -0.55; }
+                if (c.x < -limit) { c.x = -limit; c.vx *= -0.55; }
+                if (c.y > limit)  { c.y = limit;  c.vy *= -0.55; }
+                if (c.y < -limit) { c.y = -limit; c.vy *= -0.55; }
+                if (c.z > limit)  { c.z = limit;  c.vz *= -0.55; }
+                if (c.z < -limit) { c.z = -limit; c.vz *= -0.55; }
+            });
+
+            // Поворачиваем вершины куба
+            const pCubeVerts = cubeVerts.map(v => project(rotate3D(v, cubeRx, cubeRy, cubeRz), cx, botCy));
+
+            // Поворачиваем монеты и готовим их для Z-сортировки
+            const projectedCoins = coins.map(c => {
+                const rotC = rotate3D(c, cubeRx, cubeRy, cubeRz);
+                const proj = project(rotC, cx, botCy);
+                proj.radius = c.radius;
+                return proj;
+            });
+
+            // Рассчитываем Z-координаты центров граней куба для точной слоистости
+            const renderedFaces = cubeFaces.map(f => {
+                const p0 = pCubeVerts[f.indices[0]];
+                const p1 = pCubeVerts[f.indices[1]];
+                const p2 = pCubeVerts[f.indices[2]];
+                const p3 = pCubeVerts[f.indices[3]];
+                const avgZ = (p0.z + p1.z + p2.z + p3.z) / 4;
+                return { points: [p0, p1, p2, p3], z: avgZ };
+            });
+
+            // Сортируем все элементы (заказ отрисовки: от дальних к ближним)
+            const drawList = [];
+
+            renderedFaces.forEach(f => drawList.push({ type: 'face', z: f.z, data: f }));
+            projectedCoins.forEach(c => drawList.push({ type: 'coin', z: c.z, data: c }));
+
+            drawList.sort((a, b) => b.z - a.z); // От самых глубоких Z к передним
+
+            // Отрисовка Z-упорядоченных объектов
+            drawList.forEach(item => {
+                if (item.type === 'coin') {
+                    drawCoin(item.data);
+                } else {
+                    const f = item.data;
+                    ctx.save();
+                    ctx.beginPath();
+                    f.points.forEach((p, idx) => {
+                        if (idx === 0) ctx.moveTo(p.x, p.y);
+                        else ctx.lineTo(p.x, p.y);
+                    });
+                    ctx.closePath();
+
+                    // Полупрозрачные стеклянные грани с золотистым блеском
+                    ctx.fillStyle = 'rgba(243, 200, 107, 0.05)';
+                    ctx.fill();
+
+                    // Светящиеся стеклянно-золотые ребра куба
+                    ctx.strokeStyle = 'rgba(243, 200, 107, 0.45)';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    ctx.restore();
+                }
             });
 
             requestAnimationFrame(animate);
         }
         animate();
 
+        // Скролл-анимация появления
         const revealElements = document.querySelectorAll('.reveal');
         function checkReveal() {
             const windowHeight = window.innerHeight;
